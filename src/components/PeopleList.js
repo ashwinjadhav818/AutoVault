@@ -1,21 +1,19 @@
 import { useState, useEffect } from "react";
 import { ScrollView, RefreshControl } from "react-native";
 import { Text, ActivityIndicator, List } from "react-native-paper";
-import { auth } from '../../firebase';
 import { getPeopleData, subscribeToPeopleDataChanges } from "../utils/handleFireStore";
 import { useNavigation } from "@react-navigation/native";
 
 const PeopleList = () => {
     const [people, setPeople] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [refreshing, setRefreshing] = useState(false);
-    const userId = auth.currentUser.uid;
+    const [loading, setLoading] = useState(false);
+    const refreshing = false;
     const navigation = useNavigation();
 
-    const fetchData = async (refresh = false) => {
+    const fetchData = async (refresh) => {
         setLoading(true);
         setPeople([]);
-        const peopleData = await getPeopleData(userId);
+        const peopleData = await getPeopleData(refresh);
 
         // Merge the existing people data with the updated data
         const updatedPeople = [...people, ...peopleData];
@@ -39,7 +37,7 @@ const PeopleList = () => {
 
     useEffect(() => {
         const unsubscribe = subscribeToPeopleDataChanges(() => {
-        setPeople([]);
+            setPeople([]);
             fetchData(true);
         });
 
@@ -53,7 +51,7 @@ const PeopleList = () => {
     };
 
     const onRefresh = () => {
-        fetchData(refresh = true);
+        fetchData(true);
     };
 
     if (loading) {
