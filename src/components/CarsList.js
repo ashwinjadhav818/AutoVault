@@ -1,38 +1,39 @@
 import { useEffect, useState, useCallback } from 'react';
 import { View, ScrollView, StyleSheet, RefreshControl } from 'react-native';
 import { Text, Card, Chip, ActivityIndicator } from 'react-native-paper';
-import { getCarsData,subscribeToCarsDataChanges } from "../utils/handleFireStore";
+import { getCarsData, subscribeToCarsDataChanges } from "../utils/handleFireStore";
 import { useNavigation } from '@react-navigation/core';
 
 const CarsList = ({ limit, personName }) => {
     const navigation = useNavigation();
     const [cars, setCars] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [refreshing, setRefreshing] = useState(false);
+    const refreshing = false;
 
-    const fetchData = async (refresh=false) => {
-      setLoading(true);
-      let carsData = await getCarsData(refresh);
-      if (limit) {
-        carsData = carsData.slice(0, limit);
-      }
-      if (personName) {
-        carsData = carsData.filter(car => car.data.owner === personName);
-      }
-      
-      // Merge the existing car data with the updated data
-      const updatedCars = [...cars, ...carsData];
-      
-      // Remove any duplicate records based on the car ID
-      const uniqueCars = updatedCars.reduce((unique, car) => {
-        if (!unique.some(c => c.id === car.id)) {
-          unique.push(car);
+    const fetchData = async (refresh) => {
+        setLoading(true);
+        setCars([]);
+        let carsData = await getCarsData(refresh);
+        if (limit) {
+            carsData = carsData.slice(0, limit);
         }
-        return unique;
-      }, []);
-      
-      setCars(uniqueCars);
-      setLoading(false);
+        if (personName) {
+            carsData = carsData.filter(car => car.data.owner === personName);
+        }
+
+        // Merge the existing car data with the updated data
+        const updatedCars = [...cars, ...carsData];
+
+        // Remove any duplicate records based on the car ID
+        const uniqueCars = updatedCars.reduce((unique, car) => {
+            if (!unique.some(c => c.id === car.id)) {
+                unique.push(car);
+            }
+            return unique;
+        }, []);
+
+        setCars(uniqueCars);
+        setLoading(false);
     }
 
     useEffect(() => {
@@ -41,14 +42,14 @@ const CarsList = ({ limit, personName }) => {
     }, []);
 
     useEffect(() => {
-      const unsubscribe = subscribeToCarsDataChanges(() => {
-        setCars([]);
-        fetchData(true);
-      });
-    
-      return () => {
-        unsubscribe();
-      };
+        const unsubscribe = subscribeToCarsDataChanges(() => {
+            setCars([]);
+            fetchData(true);
+        });
+
+        return () => {
+            unsubscribe();
+        };
     }, []);
 
     const handleCardPress = (carId) => {
@@ -56,18 +57,17 @@ const CarsList = ({ limit, personName }) => {
     };
 
     const onRefresh = () => {
-        setCars([]);
-        fetchData(refresh=true);
+        fetchData(true);
     };
 
     if (loading) {
         return <ActivityIndicator animating={true} />;
-    } 
+    }
 
     return (
         <View style={limit === 0 ? styles.container : null}>
-            <ScrollView refreshControl={limit != 0 ? <RefreshControl refreshing={refreshing} onRefresh={onRefresh} /> : null }
-        >
+            <ScrollView refreshControl={limit != 0 ? <RefreshControl refreshing={refreshing} onRefresh={onRefresh} /> : null}
+            >
                 {cars.length == 0 ? <Text>No cars found.</Text> :
                     cars.map((car) => (
                         <Card style={styles.cards} key={car.id} onPress={() => handleCardPress(car.id)}>
@@ -85,7 +85,7 @@ const CarsList = ({ limit, personName }) => {
                                 </ScrollView>
                             </Card.Content>
                         </Card>
-                    )) 
+                    ))
                 }
             </ScrollView>
         </View>
