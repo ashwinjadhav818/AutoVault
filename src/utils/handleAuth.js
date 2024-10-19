@@ -1,4 +1,4 @@
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "@react-native-firebase/auth";
 import { auth } from "../../firebase";
 import { addUserDoc } from "./handleFireStore";
 

@@ -1,4 +1,4 @@
-import { doc, collection, getDoc, addDoc, setDoc, updateDoc, deleteDoc, arrayUnion, arrayRemove, onSnapshot } from "firebase/firestore"; import { onAuthStateChanged } from "firebase/auth";
+import { doc, collection, getDoc, addDoc, setDoc, updateDoc, deleteDoc, arrayUnion, arrayRemove, onSnapshot } from "@react-native-firebase/firestore"; import { onAuthStateChanged } from "@react-native-firebase/auth";
 import { db, auth } from "../../firebase";
 
 // Initilizing Varaibles
@@ -21,7 +21,7 @@ onAuthStateChanged(auth, (user) => {
 
 export const addUserDoc = async () => {
     const userDoc = await getDoc(doc(db, "users", userId));
-    if (userDoc.exists()) {
+    if (userDoc.exists) {
         console.log("User exists:", userDoc.data());
         return userDoc.data(); // Return the user data if it exists
     } else {
@@ -35,7 +35,7 @@ export const getUserCars = async (refresh) => {
         try {
             const userDoc = await getDoc(doc(db, "users", userId));
             userCars = [];
-            if (userDoc.exists()) {
+            if (userDoc.exists) {
                 userCars = userDoc.data().carsID;
             } else {
                 console.log("No such document for user:", userId);
@@ -58,7 +58,7 @@ export const getCarsData = async (refresh) => {
             const userCarsId = await getUserCars(userId);
             for (const carId of userCarsId) {
                 const carDoc = await getDoc(doc(db, "cars", carId));
-                if (carDoc.exists()) {
+                if (carDoc.exists) {
                     userCarsData.push({ id: carDoc.id, data: carDoc.data() });
                 } else {
                     console.log(`No car document found with ID: ${carId}`);
@@ -160,7 +160,7 @@ export const getUserPeople = async () => {
     userPeople = [];
     try {
         const userDoc = await getDoc(doc(db, "users", userId));
-        if (userDoc.exists()) {
+        if (userDoc.exists) {
             userPeople = userDoc.data().peopleID || [];
         } else {
             console.log("No such document for user:", userId);
@@ -180,7 +180,7 @@ export const getPeopleData = async (refresh) => {
             const userPeopleId = await getUserPeople(userId);
             for (const personId of userPeopleId) {
                 const personDoc = await getDoc(doc(db, "people", personId));
-                if (personDoc.exists()) {
+                if (personDoc.exists) {
                     peopleData.push({ id: personDoc.id, data: personDoc.data() });
                 } else {
                     console.log(`No person document found with ID: ${peopleId}`);
