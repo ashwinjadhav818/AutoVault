@@ -6,6 +6,7 @@ import { auth } from './firebase';
 import Home from './src/screens/Home';
 import Login from './src/screens/Login';
 import SignUp from './src/screens/SignUp';
+import Search from './src/screens/Search';
 import CarDetails from './src/screens/CarDetails';
 import AddCar from './src/screens/AddCar';
 import EditCar from './src/screens/EditCar';
@@ -58,6 +59,11 @@ const App = () => {
                     <Stack.Screen
                         name="CarDetails"
                         component={CarDetails}
+                        options={{ headerShown: false }}
+                    />
+                    <Stack.Screen
+                        name="Search"
+                        component={Search}
                         options={{ headerShown: false }}
                     />
                     <Stack.Screen

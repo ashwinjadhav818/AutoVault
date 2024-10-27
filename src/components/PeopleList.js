@@ -4,73 +4,56 @@ import { Text, ActivityIndicator, List } from "react-native-paper";
 import { getPeopleData, subscribeToPeopleDataChanges } from "../utils/handleFireStore";
 import { useNavigation } from "@react-navigation/native";
 
-const PeopleList = () => {
+const PeopleList = ({ query }) => {
     const [people, setPeople] = useState([]);
-    const [loading, setLoading] = useState(false);
-    const refreshing = false;
+    const [loading, setLoading] = useState(true);
     const navigation = useNavigation();
 
     const fetchData = async (refresh) => {
         setLoading(true);
-        setPeople([]);
-        const peopleData = await getPeopleData(refresh);
+        let peopleData = await getPeopleData(refresh);
 
-        // Merge the existing people data with the updated data
-        const updatedPeople = [...people, ...peopleData];
+        if (query) {
+            const lowercaseQuery = query.toLowerCase();
+            peopleData = peopleData.filter(person => 
+                person.data.name.toLowerCase().includes(lowercaseQuery)
+            );
+        }
 
-        // Remove any duplicate records based on the person ID
-        const uniquePeople = updatedPeople.reduce((unique, person) => {
-            if (!unique.some(c => c.id === person.id)) {
-                unique.push(person);
-            }
-            return unique;
-        }, []);
+        const uniquePeople = peopleData.filter((person, index, self) =>
+            index === self.findIndex(p => p.id === person.id)
+        );
 
         setPeople(uniquePeople);
         setLoading(false);
-    }
+    };
 
     useEffect(() => {
-        setPeople([]);
         fetchData();
-    }, []);
+    }, [query]);
 
     useEffect(() => {
-        const unsubscribe = subscribeToPeopleDataChanges(() => {
-            setPeople([]);
-            fetchData(true);
-        });
-
-        return () => {
-            unsubscribe();
-        };
+        const unsubscribe = subscribeToPeopleDataChanges(() => fetchData(true));
+        return () => unsubscribe();
     }, []);
 
-    const handleListPress = (personId) => {
-        navigation.navigate('Person', { personId });
-    };
+    if (loading) return <ActivityIndicator animating={true} />;
 
-    const onRefresh = () => {
-        fetchData(true);
-    };
-
-    if (loading) {
-        return <ActivityIndicator animating={true} />;
-    }
     return (
-        <ScrollView refreshControl={
-            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-        }>
-            {people.length == 0 ? <Text>No people found.</Text> :
-                people.map((person) => (
+        <ScrollView refreshControl={<RefreshControl refreshing={loading} onRefresh={() => fetchData(true)} />}>
+            {people.length === 0 ? (
+                <Text>No people found.</Text>
+            ) : (
+                people.map(person => (
                     <List.Item
                         title={person.data.name}
                         key={person.id}
-                        onPress={() => handleListPress(person.id)}
+                        onPress={() => navigation.navigate('Person', { personId: person.id })}
                     />
-                ))}
+                ))
+            )}
         </ScrollView>
-    )
-}
+    );
+};
 
 export default PeopleList;

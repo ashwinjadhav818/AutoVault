@@ -1,87 +1,55 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState } from 'react';
 import { View, ScrollView, StyleSheet, RefreshControl } from 'react-native';
 import { Text, Card, Chip, ActivityIndicator } from 'react-native-paper';
 import { getCarsData, subscribeToCarsDataChanges } from "../utils/handleFireStore";
 import { useNavigation } from '@react-navigation/core';
 
-const CarsList = ({ limit, personName }) => {
+const CarsList = ({ limit, personName, query }) => {
     const navigation = useNavigation();
     const [cars, setCars] = useState([]);
     const [loading, setLoading] = useState(true);
-    const refreshing = false;
 
     const fetchData = async (refresh) => {
         setLoading(true);
-        setCars([]);
+
         let carsData = await getCarsData(refresh);
-        if (limit) {
-            carsData = carsData.slice(0, limit);
-        }
-        if (personName) {
-            carsData = carsData.filter(car => car.data.owner === personName);
-        }
 
-        // Merge the existing car data with the updated data
-        const updatedCars = [...cars, ...carsData];
+        // Apply limit if provided
+        if (limit) carsData = carsData.slice(0, limit);
 
-        // Remove any duplicate records based on the car ID
-        const uniqueCars = updatedCars.reduce((unique, car) => {
-            if (!unique.some(c => c.id === car.id)) {
-                unique.push(car);
-            }
-            return unique;
-        }, []);
+        // Filter by owner if personName is provided
+        if (personName) carsData = carsData.filter(car => car.data.owner === personName);
 
-        setCars(uniqueCars);
+        // Filter by query if provided
+        if (query) carsData = carsData.filter(car => car.data.name.toLowerCase().includes(query.toLowerCase()));
+
+        setCars(carsData);
         setLoading(false);
-    }
+    };
 
     useEffect(() => {
-        setCars([]);
         fetchData();
-    }, []);
+    }, [query, personName]);
 
-    useEffect(() => {
-        const unsubscribe = subscribeToCarsDataChanges(() => {
-            setCars([]);
-            fetchData(true);
-        });
+    useEffect(() => subscribeToCarsDataChanges(() => fetchData(true)), []);
 
-        return () => {
-            unsubscribe();
-        };
-    }, []);
-
-    const handleCardPress = (carId) => {
-        navigation.navigate('CarDetails', { carId });
-    };
-
-    const onRefresh = () => {
-        fetchData(true);
-    };
-
-    if (loading) {
-        return <ActivityIndicator animating={true} />;
-    }
+    if (loading) return <ActivityIndicator animating={true} />;
 
     return (
         <View style={limit === 0 ? styles.container : null}>
-            <ScrollView refreshControl={limit != 0 ? <RefreshControl refreshing={refreshing} onRefresh={onRefresh} /> : null}
-            >
-                {cars.length == 0 ? <Text>No cars found.</Text> :
+            <ScrollView refreshControl={limit !== 0 && <RefreshControl refreshing={loading} onRefresh={() => fetchData(true)} />}>
+                {cars.length === 0 ? <Text>No cars found.</Text> :
                     cars.map((car) => (
-                        <Card style={styles.cards} key={car.id} onPress={() => handleCardPress(car.id)}>
+                        <Card style={styles.cards} key={car.id} onPress={() => navigation.navigate('CarDetails', { carId: car.id })}>
                             <Card.Cover source={{ uri: 'https://picsum.photos/700' }} />
                             <Card.Title title={car.data.name} subtitle={`Offer: ${car.data.offer}`} />
                             <Card.Content>
-                                <ScrollView horizontal={true}>
-                                    <Chip onPress={() => { }} style={styles.chip}>{`Year: ${car.data.year}`}</Chip>
-                                    <Chip onPress={() => { }} style={styles.chip}>{`Color: ${car.data.color}`}</Chip>
-                                    <Chip onPress={() => { }} style={styles.chip}>{`Varient: ${car.data.varient}`}</Chip>
-                                    <Chip onPress={() => { }} style={styles.chip}>{`Passing: ${car.data.passing}`}</Chip>
-                                    <Chip onPress={() => { }} style={styles.chip}>{`Insurance: ${car.data.insurance}`}</Chip>
-                                    <Chip onPress={() => { }} style={styles.chip}>{`KM: ${car.data.km}km`}</Chip>
-                                    <Chip onPress={() => { }} style={styles.chip}>{`Owner/Dealer: ${car.data.owner}`}</Chip>
+                                <ScrollView horizontal>
+                                    {["year", "color", "variant", "passing", "insurance", "km", "owner"].map(attr => (
+                                        <Chip key={attr} style={styles.chip}>
+                                            {`${attr.charAt(0).toUpperCase() + attr.slice(1)}: ${car.data[attr]}`}
+                                        </Chip>
+                                    ))}
                                 </ScrollView>
                             </Card.Content>
                         </Card>
@@ -93,19 +61,9 @@ const CarsList = ({ limit, personName }) => {
 };
 
 const styles = StyleSheet.create({
-    container: {
-        height: "auto"
-    },
-    cards: {
-        margin: 10,
-    },
-    chip: {
-        marginHorizontal: 4
-    },
-    noCars: {
-        color: "darkGray",
-        align: "center"
-    }
+    container: { height: "auto" },
+    cards: { margin: 10 },
+    chip: { marginHorizontal: 4 },
 });
 
 export default CarsList;

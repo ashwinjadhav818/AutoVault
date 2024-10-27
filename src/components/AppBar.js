@@ -27,7 +27,7 @@ const AppBar = ({ title, carId, personId }) => {
 
     // Conditional rendering based on title
     const renderBackAction = () => {
-        if (title !== "Home" && title !== "Cars" && title !== "People") {
+        if (title !== "Home" && title !== "Cars" && title !== "People" && title !== "Search") {
             return <Appbar.BackAction onPress={() => navigation.goBack()} />;
         }
     };
