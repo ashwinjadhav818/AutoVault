@@ -19,9 +19,6 @@ export default Search = () => {
         setOnlyCars(false);
     }
 
-
-    console.log(onlyCars)
-
     return (
         <ScrollView>
             <Searchbar
