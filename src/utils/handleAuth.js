@@ -1,8 +1,8 @@
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "@react-native-firebase/auth";
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile, updateEmail } from "@react-native-firebase/auth";
 import { auth } from "../../firebase";
 import { addUserDoc } from "./handleFireStore";
 
-const handleLogin = async (email, password, navigation) => {
+export const handleLogin = async (email, password, navigation) => {
     await signInWithEmailAndPassword(auth, email, password, navigation)
         .then(() => {
             navigation.replace("Home");
@@ -39,7 +39,7 @@ const handleLogin = async (email, password, navigation) => {
         });
 }
 
-const handleSignUp = async (email, password, navigation) => {
+export const handleSignUp = async (email, password, navigation) => {
     await createUserWithEmailAndPassword(auth, email, password, navigation)
         .then(() => {
             { addUserDoc() }
@@ -79,14 +79,36 @@ const handleSignUp = async (email, password, navigation) => {
         });
 }
 
-const handleSignOut = (navigation) => {
+export const handleSignOut = () => {
     auth.signOut()
         .then(() => {
-            navigation.navigate("Login");
+            console.log("Logout");
         })
         .catch(error => {
             alert(error.message)
         });
 }
 
-export { handleLogin, handleSignUp, handleSignOut };
+
+export const handleEditAccount = async (displayName, email, photoURL, setEmailError) => {
+    try {
+        if (displayName !== auth.currentUser.displayName || photoURL !== auth.currentUser.photoURL) {
+            await updateProfile(auth.currentUser, {
+                displayName: displayName,
+                photoURL: photoURL,
+            });
+        }
+
+        if (email !== auth.currentUser.email) {
+            await updateEmail(auth.currentUser, email);
+        }
+
+        console.log("Profile updated successfully");
+    } catch (error) {
+        if (error.code === 'auth/requires-recent-login') {
+            setEmailError("You need to re-authenticate to change your email.");
+        } else {
+            console.error("Error updating profile:", error);
+        }
+    }
+}
