@@ -1,21 +1,22 @@
 import { useState } from 'react';
-import { Appbar, Menu, Portal, Dialog, TextInput, HelperText, Button } from 'react-native-paper';
+import { Appbar, Menu, Portal } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/core';
 import { useRoute } from '@react-navigation/native';
-import { handleSignOut } from '../utils/handleAuth';
-import { Platform } from 'react-native';
-import { deleteCar, deletePerson } from '../utils/handleFireStore';
+import { Alert, Platform } from 'react-native';
+import { selectContact } from 'react-native-select-contact';
+import { addPerson, deleteCar, deletePerson } from '../utils/handleFireStore';
+import EditPersonDialog from './Popup/EditPersonDialog';
 
 const MORE_ICON = Platform.OS === 'ios' ? 'dots-horizontal' : 'dots-vertical';
 
-const AppBar = ({ title, carId, personId }) => {
+const AppBar = ({ title, index, carId, personId }) => {
     const navigation = useNavigation();
     const route = useRoute();
     const [name, setName] = useState("");
     const [number, setNumber] = useState("");
     const [visibleDialog, setVisibleDialog] = useState(false);
 
-    const hideDialog = () => setVisible(false);
+    const hideDialog = () => setVisibleDialog(false);
 
     // Access the name of the current screen/page
     const currentPageName = route.name;
@@ -27,7 +28,7 @@ const AppBar = ({ title, carId, personId }) => {
 
     // Conditional rendering based on title
     const renderBackAction = () => {
-        if (title !== "Home" && title !== "Cars" && title !== "People" && title !== "Search") {
+        if (title !== "Home" && title !== "Cars" && title !== "People" && title !== "Search" && title !== "Account") {
             return <Appbar.BackAction onPress={() => navigation.goBack()} />;
         }
     };
@@ -53,57 +54,76 @@ const AppBar = ({ title, carId, personId }) => {
     }
 
     const checkNumber = () => {
-        if (number > 999999999 && number < 10000000000) {
-            return false;
-        } else {
-            return true;
-        }
+        return number.length !== 10;
     };
+
+    const normalizePhoneNumber = (number) => {
+        const cleanedNumber = number.replace(/\D/g, "");
+        if (cleanedNumber.length === 10) {
+            return cleanedNumber;
+        } else if (cleanedNumber.length > 10) {
+            return cleanedNumber.slice(-10);
+        }
+        return "";
+    };
+
+    const importPerson = async () => {
+        try {
+            const selection = await selectContact();
+            if (selection && selection.phones && selection.phones.length > 0) {
+                const contactName = selection.name || "";
+                const selectedPhone = selection.phones[0];
+                const normalizedNumber = normalizePhoneNumber(selectedPhone.number || "");
+                addPerson(contactName, normalizedNumber);
+            } else {
+                Alert.alert("No contact selected");
+            }
+        } catch (error) {
+            console.error("Error selecting contact:", error);
+        }
+        closeMenu();
+    }
+
+    // Define menu items based on conditions
+    const menuItems = [
+        index === 2 ? { title: "Import Person", action: importPerson, icon: "import" } : null,
+        currentPageName === "CarDetails" ? { title: "Edit Car", action: handleEditCar, icon: "clipboard-edit-outline" } : null,
+        currentPageName === "CarDetails" ? { title: "Delete Car", action: handleDeleteCar, icon: "trash-can-outline" } : null,
+        currentPageName === "Person" ? { title: "Edit Person", action: handleEditPerson, icon: "clipboard-edit-outline" } : null,
+        currentPageName === "Person" ? { title: "Delete Person", action: handleDeletePerson, icon: "trash-can-outline" } : null,
+    ].filter(item => item !== null); // Remove null items
 
     return (
         <Appbar.Header>
             {renderBackAction()}
             <Appbar.Content title={title} />
-            <Menu
-                visible={visible}
-                onDismiss={closeMenu}
-                anchor={<Appbar.Action icon={MORE_ICON} onPress={openMenu} />}
-                anchorPosition="bottom"
-            >
-                {currentPageName === "CarDetails" ? <Menu.Item leadingIcon="clipboard-edit-outline" onPress={() => handleEditCar()} title="Edit Car" /> : null}
-                {currentPageName === "CarDetails" ? <Menu.Item leadingIcon="trash-can-outline" onPress={() => handleDeleteCar()} title="Delete Car" /> : null}
-                {currentPageName === "Person" ? <Menu.Item leadingIcon="clipboard-edit-outline" onPress={() => handleEditPerson()} title="Edit Person" /> : null}
-                {currentPageName === "Person" ? <Menu.Item leadingIcon="trash-can-outline" onPress={() => handleDeletePerson()} title="Delete Person" /> : null}
-                <Menu.Item leadingIcon="logout" onPress={() => handleSignOut(navigation)} title="Logout" />
-            </Menu>
-            <Portal>
-                <Dialog visible={visibleDialog} onDismiss={hideDialog}>
-                    <Dialog.Title>Add Person</Dialog.Title>
-                    <Dialog.Content>
-                        <TextInput
-                            label="Name"
-                            value={name}
-                            mode="outlined"
-                            onChangeText={name => setName(name)}
+            {menuItems.length > 0 && (
+                <Menu
+                    visible={visible}
+                    onDismiss={closeMenu}
+                    anchor={<Appbar.Action icon={MORE_ICON} onPress={openMenu} />}
+                    anchorPosition="bottom"
+                >
+                    {menuItems.map((item, index) => (
+                        <Menu.Item
+                            key={index}
+                            leadingIcon={item.icon}
+                            onPress={item.action}
+                            title={item.title}
                         />
-                        <TextInput
-                            label="Number"
-                            value={number}
-                            mode="outlined"
-                            onChangeText={number => setNumber(number)}
-                        />
-                        <HelperText type="error" visible={checkNumber()}>
-                            Phone number should have 10 numbers.
-                        </HelperText>
-                    </Dialog.Content>
-                    <Dialog.Actions>
-                        <Button onPress={hideDialog}>Discard</Button>
-                        <Button onPress={handleEditPerson}>Add</Button>
-                    </Dialog.Actions>
-                </Dialog>
-            </Portal>
-
-            {/* TODO: Add a search button to open search page. */}
+                    ))}
+                </Menu>
+            )}
+            <EditPersonDialog
+                visible={visibleDialog}
+                onDismiss={hideDialog}
+                name={name}
+                setName={setName}
+                number={number}
+                setNumber={setNumber}
+                checkNumber={checkNumber}
+                onSave={handleEditPerson}
+            />
         </Appbar.Header>
     );
 };

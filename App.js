@@ -37,11 +37,43 @@ const App = () => {
             <NavigationContainer>
                 <Stack.Navigator>
                     {user ? (
-                        <Stack.Screen
-                            name="Home"
-                            component={Home}
-                            options={{ headerShown: false }}
-                        />
+                        <>
+                            <Stack.Screen
+                                name="Home"
+                                component={Home}
+                                options={{ headerShown: false }}
+                            />
+                            <Stack.Screen
+                                name="CarDetails"
+                                component={CarDetails}
+                                options={{ headerShown: false }}
+                            />
+                            <Stack.Screen
+                                name="Search"
+                                component={Search}
+                                options={{ headerShown: false }}
+                            />
+                            <Stack.Screen
+                                name="AddCar"
+                                component={AddCar}
+                                options={{ headerShown: false }}
+                            />
+                            <Stack.Screen
+                                name="EditCar"
+                                component={EditCar}
+                                options={{ headerShown: false }}
+                            />
+                            <Stack.Screen
+                                name="Person"
+                                component={Person}
+                                options={{ headerShown: false }}
+                            />
+                            <Stack.Screen
+                                name="EditPerson"
+                                component={EditPerson}
+                                options={{ headerShown: false }}
+                            />
+                        </>
                     ) : (
                         <>
                             <Stack.Screen
@@ -56,36 +88,6 @@ const App = () => {
                             />
                         </>
                     )}
-                    <Stack.Screen
-                        name="CarDetails"
-                        component={CarDetails}
-                        options={{ headerShown: false }}
-                    />
-                    <Stack.Screen
-                        name="Search"
-                        component={Search}
-                        options={{ headerShown: false }}
-                    />
-                    <Stack.Screen
-                        name="AddCar"
-                        component={AddCar}
-                        options={{ headerShown: false }}
-                    />
-                    <Stack.Screen
-                        name="EditCar"
-                        component={EditCar}
-                        options={{ headerShown: false }}
-                    />
-                    <Stack.Screen
-                        name="Person"
-                        component={Person}
-                        options={{ headerShown: false }}
-                    />
-                    <Stack.Screen
-                        name="EditPerson"
-                        component={EditPerson}
-                        options={{ headerShown: false }}
-                    />
                 </Stack.Navigator>
             </NavigationContainer>
         </PaperProvider>
