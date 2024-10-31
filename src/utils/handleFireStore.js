@@ -91,14 +91,14 @@ export const getCarDetails = async (carId) => {
     }
 }
 
-export const addNewCar = async (name, offer, year, color, varient, passing, km, insurance, owner) => {
+export const addNewCar = async (name, offer, year, color, variant, passing, km, insurance, owner) => {
     try {
         const docRef = await addDoc(collection(db, "cars"), {
             name: name,
             offer: offer,
             year: year,
             color: color,
-            varient: varient,
+            variant: variant,
             passing: passing,
             km: km,
             insurance: insurance,
