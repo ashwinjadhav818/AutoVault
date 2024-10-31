@@ -1,35 +1,45 @@
 import { useEffect, useState } from "react";
 import { View, ScrollView, StyleSheet } from "react-native";
-import { Text, ActivityIndicator, Button, Dialog, Portal, TextInput, FAB } from "react-native-paper";
+import { Text, ActivityIndicator } from "react-native-paper";
 import { Cell, Section, TableView } from "react-native-tableview-simple";
 import AppBar from "../components/AppBar";
 import CarsList from "../components/CarsList";
-import { getPersonData, updatePerson } from "../utils/handleFireStore";
+import { getPersonData, subscribeToPeopleDataChanges, getPeopleData } from "../utils/handleFireStore";
 
 export default PersonDetails = ({ route }) => {
     const [name, setName] = useState("");
     const [number, setNumber] = useState("");
+    const [loading, setLoading] = useState(true);
     const { personId } = route.params;
-    const [visible, setVisible] = useState(false);
 
-    const hideDialog = () => setVisible(false);
+    const fetchData = async () => {
+        setLoading(true);
+        try {
+            await getPeopleData(); // Ensure people data is fetched first
+            const person = await getPersonData(personId);
 
-    async function fetchData() {
-        const personData = await getPersonData(personId);
-        setName(personData.data.name);
-        setNumber(personData.data.number);
-    }
-    const handleEditPerson = () => {
-        if (name.trim() !== "" && number.trim().length === 10) {
-            updatePerson(personId, name, number);
-            setName(""); // Clear the name field after adding the person
-            setNumber(""); // Clear the number field after adding the person
-            hideDialog(); // Close the dialog after adding the person
+            if (person) {
+                setName(person.data.name);
+                setNumber(person.data.number);
+            } else {
+                console.warn("No person data found for ID:", personId);
+                setName("");
+                setNumber("");
+            }
+        } catch (error) {
+            console.error("Error fetching person data:", error);
+        } finally {
+            setLoading(false);
         }
-    }
+    };
 
     useEffect(() => {
         fetchData();
+    }, [personId]);
+
+    useEffect(() => {
+        const unsubscribe = subscribeToPeopleDataChanges(fetchData);
+        return () => unsubscribe();
     }, []);
 
     return (
@@ -40,7 +50,9 @@ export default PersonDetails = ({ route }) => {
                 <Text variant="titleMedium">Details</Text>
                 <TableView>
                     <Section>
-                        {name && number ? (
+                        {loading ? (
+                            <ActivityIndicator animating={true} />
+                        ) : (
                             <>
                                 <Cell
                                     cellStyle="RightDetail"
@@ -53,18 +65,20 @@ export default PersonDetails = ({ route }) => {
                                     detail={number}
                                 />
                             </>
-                        ) : (
-                            <ActivityIndicator animating={true} />
                         )}
                     </Section>
                 </TableView>
 
                 <Text variant="titleMedium">Cars</Text>
-                {name || number ? <CarsList personName={name} /> : <ActivityIndicator animating={true} />}
+                {loading ? (
+                    <ActivityIndicator animating={true} />
+                ) : (
+                    <CarsList personName={name} />
+                )}
             </View>
         </ScrollView>
-    )
-}
+    );
+};
 
 const styles = StyleSheet.create({
     container: {
@@ -72,11 +86,5 @@ const styles = StyleSheet.create({
     },
     contentContainer: {
         padding: 8,
-    },
-    fab: {
-        position: 'absolute',
-        margin: 16,
-        right: 0,
-        bottom: 0,
     },
 });
