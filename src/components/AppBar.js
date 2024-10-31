@@ -129,14 +129,10 @@ const AppBar = ({ title, index, carId, personId }) => {
                 </Menu>
             )}
             <EditPersonDialog
+                personId={personId}
                 visible={visibleDialog}
                 onDismiss={hideDialog}
-                name={name}
-                setName={setName}
-                number={number}
-                setNumber={setNumber}
-                checkNumber={checkNumber}
-                onSave={handleEditPerson}
+                hideDialog={hideDialog}
             />
         </Appbar.Header>
     );
