@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Appbar, Menu, Portal } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/core';
 import { useRoute } from '@react-navigation/native';
-import { Alert, Platform } from 'react-native';
+import { Alert, PermissionsAndroid, Platform } from 'react-native';
 import { selectContact } from 'react-native-select-contact';
 import { addPerson, deleteCar, deletePerson } from '../utils/handleFireStore';
 import EditPersonDialog from './Popup/EditPersonDialog';
@@ -68,21 +68,33 @@ const AppBar = ({ title, index, carId, personId }) => {
     };
 
     const importPerson = async () => {
+        closeMenu();
         try {
+            if (Platform.OS === 'android') {
+                const request = await PermissionsAndroid.request(
+                    PermissionsAndroid.PERMISSIONS.READ_CONTACTS,
+                );
+
+                if (request === PermissionsAndroid.RESULTS.DENIED ||
+                    request === PermissionsAndroid.RESULTS.NEVER_ASK_AGAIN) {
+                    Alert.alert("Permission Denied");
+                    return;
+                }
+            }
+
             const selection = await selectContact();
             if (selection && selection.phones && selection.phones.length > 0) {
                 const contactName = selection.name || "";
                 const selectedPhone = selection.phones[0];
                 const normalizedNumber = normalizePhoneNumber(selectedPhone.number || "");
-                addPerson(contactName, normalizedNumber);
+                await addPerson(contactName, normalizedNumber);
             } else {
                 Alert.alert("No contact selected");
             }
         } catch (error) {
             console.error("Error selecting contact:", error);
         }
-        closeMenu();
-    }
+    };
 
     // Define menu items based on conditions
     const menuItems = [
