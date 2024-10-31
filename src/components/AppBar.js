@@ -12,8 +12,6 @@ const MORE_ICON = Platform.OS === 'ios' ? 'dots-horizontal' : 'dots-vertical';
 const AppBar = ({ title, index, carId, personId }) => {
     const navigation = useNavigation();
     const route = useRoute();
-    const [name, setName] = useState("");
-    const [number, setNumber] = useState("");
     const [visibleDialog, setVisibleDialog] = useState(false);
 
     const hideDialog = () => setVisibleDialog(false);
@@ -33,28 +31,32 @@ const AppBar = ({ title, index, carId, personId }) => {
         }
     };
 
-    const handleDeleteCar = () => {
-        deleteCar(carId);
-        navigation.goBack();
-    }
+    const handleDeleteCar = async () => {
+        try {
+            await deleteCar(carId);
+            navigation.goBack();
+        } catch (error) {
+            Alert.alert("Error", "Could not delete car.");
+        }
+    };
 
     const handleEditCar = () => {
         closeMenu();
         navigation.navigate("EditCar", { carId });
-    }
+    };
 
     const handleEditPerson = () => {
         setVisibleDialog(true);
         closeMenu();
-    }
+    };
 
-    const handleDeletePerson = () => {
-        deletePerson(personId);
-        navigation.goBack();
-    }
-
-    const checkNumber = () => {
-        return number.length !== 10;
+    const handleDeletePerson = async () => {
+        try {
+            await deletePerson(personId);
+            navigation.goBack();
+        } catch (error) {
+            Alert.alert("Error", "Could not delete person.");
+        }
     };
 
     const normalizePhoneNumber = (number) => {
