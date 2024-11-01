@@ -70,8 +70,8 @@ const CarDetails = ({ route }) => {
                                     />
                                     <Cell
                                         cellStyle="RightDetail"
-                                        title="Varient"
-                                        detail={car.data.varient}
+                                        title="Variant"
+                                        detail={car.data.variant}
                                     />
                                     <Cell
                                         cellStyle="RightDetail"

@@ -14,7 +14,7 @@ const AddCar = () => {
     const [carOffer, setCarOffer] = useState("");
     const [carYear, setCarYear] = useState("");
     const [carColor, setCarColor] = useState("");
-    const [carVarient, setCarVarient] = useState("");
+    const [carVariant, setCarVariant] = useState("");
     const [carPassing, setCarPassing] = useState("");
     const [carInsurance, setCarInsurance] = useState("");
     const [carKM, setCarKM] = useState("");
@@ -26,7 +26,7 @@ const AddCar = () => {
         "Offer",
         "Year",
         "Color",
-        "Varient",
+        "Variant",
         "Passing",
         "KM",
         "Insurance",
@@ -37,7 +37,7 @@ const AddCar = () => {
         Offer: setCarOffer,
         Year: setCarYear,
         Color: setCarColor,
-        Varient: setCarVarient,
+        Variant: setCarVariant,
         Passing: setCarPassing,
         KM: setCarKM,
         Insurance: setCarInsurance,
@@ -85,7 +85,7 @@ const AddCar = () => {
     }, []);
 
     const handleNewCar = () => {
-        addNewCar(carName, carOffer, carYear, carColor, carVarient, carPassing, carKM, carInsurance, carOwner);
+        addNewCar(carName, carOffer, carYear, carColor, carVariant, carPassing, carKM, carInsurance, carOwner);
         navigation.goBack();
     };
 
@@ -164,7 +164,7 @@ const AddCar = () => {
                             !carOffer ||
                             !carYear ||
                             !carColor ||
-                            !carVarient ||
+                            !carVariant ||
                             !carPassing ||
                             !carKM ||
                             !carInsurance ||
@@ -179,7 +179,7 @@ const AddCar = () => {
                         !carOffer ||
                         !carYear ||
                         !carColor ||
-                        !carVarient ||
+                        !carVariant ||
                         !carPassing ||
                         !carKM ||
                         !carInsurance ||

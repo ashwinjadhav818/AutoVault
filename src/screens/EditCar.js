@@ -17,7 +17,7 @@ export default EditCar = ({ route }) => {
     const [carOffer, setCarOffer] = useState();
     const [carYear, setCarYear] = useState();
     const [carColor, setCarColor] = useState();
-    const [carVarient, setCarVarient] = useState();
+    const [carVariant, setCarVariant] = useState();
     const [carPassing, setCarPassing] = useState();
     const [carInsurance, setCarInsurance] = useState();
     const [carKM, setCarKM] = useState();
@@ -29,7 +29,7 @@ export default EditCar = ({ route }) => {
         "Offer",
         "Year",
         "Color",
-        "Varient",
+        "Variant",
         "Passing",
         "KM",
         "Insurance",
@@ -40,7 +40,7 @@ export default EditCar = ({ route }) => {
         Offer: carOffer,
         Year: carYear,
         Color: carColor,
-        Varient: carVarient,
+        Variant: carVariant,
         Passing: carPassing,
         KM: carKM,
         Insurance: carInsurance,
@@ -51,7 +51,7 @@ export default EditCar = ({ route }) => {
         Offer: setCarOffer,
         Year: setCarYear,
         Color: setCarColor,
-        Varient: setCarVarient,
+        Variant: setCarVariant,
         Passing: setCarPassing,
         KM: setCarKM,
         Insurance: setCarInsurance,
@@ -91,7 +91,7 @@ export default EditCar = ({ route }) => {
         setCarOffer(car.data.offer)
         setCarYear(car.data.year)
         setCarColor(car.data.color)
-        setCarVarient(car.data.varient)
+        setCarVariant(car.data.variant)
         setCarPassing(car.data.passing)
         setCarKM(car.data.km)
         setCarInsurance(car.data.insurance)
@@ -114,7 +114,7 @@ export default EditCar = ({ route }) => {
         return <ActivityIndicator animating={true} />;
     }
     const handleNewCar = () => {
-        editCar(carId, carName, carOffer, carYear, carColor, carVarient, carPassing, carKM, carInsurance, carOwner);
+        editCar(carId, carName, carOffer, carYear, carColor, carVariant, carPassing, carKM, carInsurance, carOwner);
         navigation.goBack();
     };
 
@@ -194,7 +194,7 @@ export default EditCar = ({ route }) => {
                             !carOffer ||
                             !carYear ||
                             !carColor ||
-                            !carVarient ||
+                            !carVariant ||
                             !carPassing ||
                             !carKM ||
                             !carInsurance ||
@@ -209,7 +209,7 @@ export default EditCar = ({ route }) => {
                         !carOffer ||
                         !carYear ||
                         !carColor ||
-                        !carVarient ||
+                        !carVariant ||
                         !carPassing ||
                         !carKM ||
                         !carInsurance ||

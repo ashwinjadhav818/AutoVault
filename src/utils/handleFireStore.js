@@ -117,14 +117,14 @@ export const addNewCar = async (name, offer, year, color, variant, passing, km, 
     }
 }
 
-export const editCar = async (carId, name, offer, year, color, varient, passing, km, insurance, owner) => {
+export const editCar = async (carId, name, offer, year, color, variant, passing, km, insurance, owner) => {
     try {
         await updateDoc(doc(db, "cars", carId), {
             name: name,
             offer: offer,
             year: year,
             color: color,
-            varient: varient,
+            variant: variant,
             passing: passing,
             km: km,
             insurance: insurance,
