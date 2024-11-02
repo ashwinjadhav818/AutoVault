@@ -3,21 +3,25 @@ import { View, Image, StyleSheet, ScrollView } from "react-native";
 import PagerView from "react-native-pager-view";
 import { ActivityIndicator } from "react-native-paper";
 import { Cell, Section, TableView } from "react-native-tableview-simple";
-import { getCarDetails } from "../utils/handleFireStore";
+import { getCarDetails, getPersonData } from "../utils/handleFireStore";
 import AppBar from "../components/AppBar";
 
 const CarDetails = ({ route }) => {
     const [car, setCar] = useState(null);
+    const [ownerName, setOwnerName] = useState("");
 
     const { carId } = route.params;
     const fetchCarDetails = async () => {
         const carDetails = await getCarDetails(carId);
+        const ownerDetails = await getPersonData(carDetails.data.owner);
+
+        setOwnerName(ownerDetails.data.name);
         setCar(carDetails);
     };
 
     useEffect(() => {
         fetchCarDetails();
-    }, []);
+    }, [carId]);
 
     const images = [
         "https://picsum.photos/700",
@@ -91,7 +95,7 @@ const CarDetails = ({ route }) => {
                                     <Cell
                                         cellStyle="RightDetail"
                                         title="Owner/Dealer"
-                                        detail={car.data.owner}
+                                        detail={ownerName}
                                     />
                                 </Section>
                             </TableView>

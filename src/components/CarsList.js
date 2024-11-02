@@ -4,7 +4,7 @@ import { Text, Card, Chip, ActivityIndicator } from 'react-native-paper';
 import { getCarsData, subscribeToCarsDataChanges } from "../utils/handleFireStore";
 import { useNavigation } from '@react-navigation/core';
 
-const CarsList = ({ limit, personName, query }) => {
+const CarsList = ({ limit, personId, query }) => {
     const navigation = useNavigation();
     const [cars, setCars] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -17,8 +17,8 @@ const CarsList = ({ limit, personName, query }) => {
         // Apply limit if provided
         if (limit) carsData = carsData.slice(0, limit);
 
-        // Filter by owner if personName is provided
-        if (personName) carsData = carsData.filter(car => car.data.owner === personName);
+        // Filter by owner if personId is provided
+        if (personId) carsData = carsData.filter(car => car.data.owner === personId);
 
         // Filter by query if provided
         if (query) carsData = carsData.filter(car => car.data.name.toLowerCase().includes(query.toLowerCase()));
@@ -29,7 +29,7 @@ const CarsList = ({ limit, personName, query }) => {
 
     useEffect(() => {
         fetchData();
-    }, [query, personName]);
+    }, [query, personId]);
 
     useEffect(() => subscribeToCarsDataChanges(() => fetchData(true)), []);
 

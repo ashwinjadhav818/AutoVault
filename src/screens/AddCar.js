@@ -74,7 +74,7 @@ const AddCar = () => {
         const peopleData = await getPeopleData(userId);
         const formattedPeopleData = peopleData.map((item) => ({
             label: item.data.name,
-            value: item.data.name,
+            value: item.id,
         }));
         setPeople(formattedPeopleData);
     }

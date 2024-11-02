@@ -34,7 +34,9 @@ export default EditCar = ({ route }) => {
         "KM",
         "Insurance",
     ];
+    const isAnyFieldEmpty = !carName || !carOffer || !carYear || !carColor || !carVariant || !carPassing || !carKM || !carInsurance || !carOwner;
     const numericInputs = ["Offer", "Year", "KM"];
+
     const defaultStateMap = {
         Name: carName,
         Offer: carOffer,
@@ -87,6 +89,15 @@ export default EditCar = ({ route }) => {
         const userId = auth.currentUser.uid;
         // Getting Car Details
         car = await getCarDetails(carId);
+        const peopleData = await getPeopleData(userId);
+
+        // Check if car data is available
+        if (!car || !car.data) {
+            console.error("Car data not found for ID:", carId);
+            setLoading(false);
+            return;
+        }
+
         setCarName(car.data.name)
         setCarOffer(car.data.offer)
         setCarYear(car.data.year)
@@ -97,18 +108,18 @@ export default EditCar = ({ route }) => {
         setCarInsurance(car.data.insurance)
         setCarOwner(car.data.owner)
 
-        const peopleData = await getPeopleData(userId);
         const formattedPeopleData = peopleData.map((item) => ({
             label: item.data.name,
-            value: item.data.name,
+            value: item.id,
         }));
+
         setPeople(formattedPeopleData);
         setLoading(false);
     }
 
     useEffect(() => {
         fetchData();
-    }, []);
+    }, [carId]);
     
     if (loading) {
         return <ActivityIndicator animating={true} />;
@@ -189,32 +200,11 @@ export default EditCar = ({ route }) => {
                 <Button
                     mode="contained-tonal"
                     onPress={() => {
-                        const isAnyFieldEmpty =
-                            !carName ||
-                            !carOffer ||
-                            !carYear ||
-                            !carColor ||
-                            !carVariant ||
-                            !carPassing ||
-                            !carKM ||
-                            !carInsurance ||
-                            !carOwner;
-
                         if (!isAnyFieldEmpty) {
                             handleNewCar();
                         }
                     }}
-                    disabled={
-                        !carName ||
-                        !carOffer ||
-                        !carYear ||
-                        !carColor ||
-                        !carVariant ||
-                        !carPassing ||
-                        !carKM ||
-                        !carInsurance ||
-                        !carOwner
-                    }
+                    disabled={isAnyFieldEmpty}
                     style={styles.button}
                 >
                     Update

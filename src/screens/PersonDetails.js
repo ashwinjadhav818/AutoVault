@@ -73,7 +73,7 @@ export default PersonDetails = ({ route }) => {
                 {loading ? (
                     <ActivityIndicator animating={true} />
                 ) : (
-                    <CarsList personName={name} />
+                    <CarsList personId={personId} />
                 )}
             </View>
         </ScrollView>
