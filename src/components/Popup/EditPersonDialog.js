@@ -1,6 +1,6 @@
-import { Portal, Dialog, TextInput, HelperText, Button } from 'react-native-paper';
-import { editPerson, getPersonData } from '../../utils/handleFireStore';
-import { useState, useEffect } from 'react';
+import { Portal, Dialog, TextInput, HelperText, Button } from "react-native-paper";
+import { editPerson, getPersonData } from "../../utils/handleFireStore";
+import { useState, useEffect } from "react";
 
 const EditPersonDialog = ({
     personId,

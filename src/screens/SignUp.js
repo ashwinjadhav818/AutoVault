@@ -1,12 +1,12 @@
-import React, { useEffect, useState } from 'react';
-import { Text, Button, TextInput } from 'react-native-paper';
-import { useNavigation } from '@react-navigation/core';
-import { KeyboardAvoidingView, StyleSheet, View } from 'react-native'
+import React, { useEffect, useState } from "react";
+import { Text, Button, TextInput } from "react-native-paper";
+import { useNavigation } from "@react-navigation/core";
+import { KeyboardAvoidingView, StyleSheet, View } from "react-native"
 import { handleSignUp } from "../utils/handleAuth";
 
 export default SignUp = () => {
-    const [email, setEmail] = useState('')
-    const [password, setPassword] = useState('')
+    const [email, setEmail] = useState("")
+    const [password, setPassword] = useState("")
 
     const navigation = useNavigation();
 

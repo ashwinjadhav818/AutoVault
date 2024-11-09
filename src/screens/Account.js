@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Button, ActivityIndicator } from "react-native-paper";
 import EditAccountDialog from "../components/Popup/EditAccountDialog";
-import { auth } from '../../firebase';
+import { auth } from "../../firebase";
 import { Cell, Section, TableView } from "react-native-tableview-simple";
 import { StyleSheet } from "react-native";
 import { handleSignOut } from "../utils/handleAuth";

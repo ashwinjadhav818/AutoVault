@@ -1,6 +1,6 @@
 // AddPersonDialog.js
-import React, { useState } from 'react';
-import { Button, Dialog, Portal, TextInput, HelperText } from 'react-native-paper';
+import React, { useState } from "react";
+import { Button, Dialog, Portal, TextInput, HelperText } from "react-native-paper";
 import { addPerson } from "../../utils/handleFireStore";
 
 const AddPersonDialog = ({ visible, onDismiss, refreshPeopleList }) => {

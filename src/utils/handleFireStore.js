@@ -1,4 +1,4 @@
-import { doc, collection, getDoc, addDoc, setDoc, updateDoc, deleteDoc, arrayUnion, arrayRemove, onSnapshot } from "@react-native-firebase/firestore"; import { onAuthStateChanged } from "@react-native-firebase/auth";
+import { doc, collection, getDoc, addDoc, setDoc, updateDoc, deleteDoc, arrayUnion, arrayRemove } from "@react-native-firebase/firestore"; import { onAuthStateChanged } from "@react-native-firebase/auth";
 import { db, auth } from "../../firebase";
 
 // Initilizing Varaibles

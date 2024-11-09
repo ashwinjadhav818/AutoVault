@@ -105,7 +105,7 @@ export const handleEditAccount = async (displayName, email, photoURL, setEmailEr
 
         console.log("Profile updated successfully");
     } catch (error) {
-        if (error.code === 'auth/requires-recent-login') {
+        if (error.code === "auth/requires-recent-login") {
             setEmailError("You need to re-authenticate to change your email.");
         } else {
             console.error("Error updating profile:", error);

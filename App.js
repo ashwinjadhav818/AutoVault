@@ -1,17 +1,17 @@
-import React, { useEffect, useState } from 'react';
-import { PaperProvider } from 'react-native-paper';
-import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { auth } from './firebase';
-import Home from './src/screens/Home';
-import Login from './src/screens/Login';
-import SignUp from './src/screens/SignUp';
-import Search from './src/screens/Search';
-import CarDetails from './src/screens/CarDetails';
-import AddCar from './src/screens/AddCar';
-import EditCar from './src/screens/EditCar';
-import Person from './src/screens/PersonDetails';
-import EditPerson from './src/screens/EditPerson';
+import React, { useEffect, useState } from "react";
+import { PaperProvider } from "react-native-paper";
+import { NavigationContainer } from "@react-navigation/native";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { auth } from "./firebase";
+import Home from "./src/screens/Home";
+import Login from "./src/screens/Login";
+import SignUp from "./src/screens/SignUp";
+import Search from "./src/screens/Search";
+import CarDetails from "./src/screens/CarDetails";
+import AddCar from "./src/screens/AddCar";
+import EditCar from "./src/screens/EditCar";
+import Person from "./src/screens/PersonDetails";
+import EditPerson from "./src/screens/EditPerson";
 
 const Stack = createNativeStackNavigator();
 

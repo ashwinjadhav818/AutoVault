@@ -1,8 +1,8 @@
-import { useEffect, useState } from 'react';
-import { View, ScrollView, StyleSheet, RefreshControl } from 'react-native';
-import { Text, Card, Chip, ActivityIndicator } from 'react-native-paper';
+import { useEffect, useState } from "react";
+import { View, ScrollView, StyleSheet, RefreshControl } from "react-native";
+import { Text, Card, Chip, ActivityIndicator } from "react-native-paper";
 import { getCarsData, getPersonData, subscribeToCarsDataChanges } from "../utils/handleFireStore";
-import { useNavigation } from '@react-navigation/core';
+import { useNavigation } from "@react-navigation/core";
 
 const CarsList = ({ limit, personId, query }) => {
     const navigation = useNavigation();
@@ -56,8 +56,8 @@ const CarsList = ({ limit, personId, query }) => {
             <ScrollView refreshControl={limit !== 0 && <RefreshControl refreshing={loading} onRefresh={() => fetchData(true)} />}>
                 {cars.length === 0 ? <Text>No cars found.</Text> :
                     cars.map((car) => (
-                        <Card style={styles.cards} key={car.id} onPress={() => navigation.navigate('CarDetails', { carId: car.id })}>
-                            <Card.Cover source={{ uri: 'https://picsum.photos/700' }} />
+                        <Card style={styles.cards} key={car.id} onPress={() => navigation.navigate("CarDetails", { carId: car.id })}>
+                            <Card.Cover source={{ uri: "https://picsum.photos/700" }} />
                             <Card.Title title={car.data.name} subtitle={`Offer: ${car.data.offer}`} />
                             <Card.Content>
                                 <ScrollView

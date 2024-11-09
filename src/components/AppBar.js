@@ -1,13 +1,13 @@
-import { useState } from 'react';
-import { Appbar, Menu, Portal } from 'react-native-paper';
-import { useNavigation } from '@react-navigation/core';
-import { useRoute } from '@react-navigation/native';
-import { Alert, PermissionsAndroid, Platform } from 'react-native';
-import { selectContact } from 'react-native-select-contact';
-import { addPerson, deleteCar, deletePerson } from '../utils/handleFireStore';
-import EditPersonDialog from './Popup/EditPersonDialog';
+import { useState } from "react";
+import { Appbar, Menu, Portal } from "react-native-paper";
+import { useNavigation } from "@react-navigation/core";
+import { useRoute } from "@react-navigation/native";
+import { Alert, PermissionsAndroid, Platform } from "react-native";
+import { selectContact } from "react-native-select-contact";
+import { addPerson, deleteCar, deletePerson } from "../utils/handleFireStore";
+import EditPersonDialog from "./Popup/EditPersonDialog";
 
-const MORE_ICON = Platform.OS === 'ios' ? 'dots-horizontal' : 'dots-vertical';
+const MORE_ICON = Platform.OS === "ios" ? "dots-horizontal" : "dots-vertical";
 
 const AppBar = ({ title, index, carId, personId }) => {
     const navigation = useNavigation();
@@ -72,7 +72,7 @@ const AppBar = ({ title, index, carId, personId }) => {
     const importPerson = async () => {
         closeMenu();
         try {
-            if (Platform.OS === 'android') {
+            if (Platform.OS === "android") {
                 const request = await PermissionsAndroid.request(
                     PermissionsAndroid.PERMISSIONS.READ_CONTACTS,
                 );

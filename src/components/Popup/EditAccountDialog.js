@@ -1,9 +1,9 @@
 // ProfileEditPopup.js
-import React, { useState } from 'react';
-import { Dialog, Portal, TextInput, Button, HelperText } from 'react-native-paper';
-import { Alert } from 'react-native';
-import { handleEditAccount } from '../../utils/handleAuth';
-import { auth } from '../../../firebase';
+import React, { useState } from "react";
+import { Dialog, Portal, TextInput, Button, HelperText } from "react-native-paper";
+import { Alert } from "react-native";
+import { handleEditAccount } from "../../utils/handleAuth";
+import { auth } from "../../../firebase";
 
 export default EditAccountPopup = ({ visible, onDismiss, fetchUserData }) => {
     const [displayName, setDisplayName] = useState(auth.currentUser.displayName || "");

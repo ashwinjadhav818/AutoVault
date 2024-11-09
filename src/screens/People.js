@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { View, StyleSheet } from "react-native";
-import { FAB } from 'react-native-paper';
+import { FAB } from "react-native-paper";
 import PeopleList from "../components/PeopleList";
 import AddPersonDialog from "../components/Popup/AddPersonDialog"; // Import the new dialog component
 
@@ -37,7 +37,7 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     fab: {
-        position: 'absolute',
+        position: "absolute",
         margin: 16,
         right: 0,
         bottom: 0,

@@ -48,7 +48,7 @@ const PeopleList = ({ query }) => {
                     <List.Item
                         title={person.data.name}
                         key={person.id}
-                        onPress={() => navigation.navigate('Person', { personId: person.id })}
+                        onPress={() => navigation.navigate("Person", { personId: person.id })}
                     />
                 ))
             )}

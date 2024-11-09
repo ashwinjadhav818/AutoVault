@@ -1,11 +1,11 @@
-import { useState } from 'react';
-import { View, StyleSheet, ScrollView } from 'react-native';
-import { Text, Searchbar, Chip } from 'react-native-paper';
-import CarsList from '../components/CarsList';
-import PeopleList from '../components/PeopleList';
+import { useState } from "react";
+import { View, StyleSheet, ScrollView } from "react-native";
+import { Text, Searchbar, Chip } from "react-native-paper";
+import CarsList from "../components/CarsList";
+import PeopleList from "../components/PeopleList";
 
 export default Search = () => {
-    const [searchQuery, setSearchQuery] = useState('');
+    const [searchQuery, setSearchQuery] = useState("");
     const [onlyCars, setOnlyCars] = useState(false);
     const [onlyPeople, setOnlyPeople] = useState(false);
 
@@ -52,14 +52,14 @@ export default Search = () => {
             {!onlyPeople && (
                 <>
                     <Text variant="titleMedium" style={styles.heading}>Cars</Text>
-                    <CarsList query={searchQuery} limit={searchQuery === '' ? 5 : undefined} />
+                    <CarsList query={searchQuery} limit={searchQuery === "" ? 5 : undefined} />
                 </>
             )}
 
             {!onlyCars && (
                 <>
                     <Text variant="titleMedium" style={styles.heading}>People</Text>
-                    <PeopleList query={searchQuery} limit={searchQuery === '' ? 5 : undefined} />
+                    <PeopleList query={searchQuery} limit={searchQuery === "" ? 5 : undefined} />
                 </>
             )}
 
@@ -77,9 +77,9 @@ const styles = StyleSheet.create({
         marginHorizontal: 12,
     },
     chipContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'start',
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "start",
         marginHorizontal: 8,
     },
     chip: {
