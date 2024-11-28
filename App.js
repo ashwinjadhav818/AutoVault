@@ -11,7 +11,6 @@ import CarDetails from "./src/screens/CarDetails";
 import AddCar from "./src/screens/AddCar";
 import EditCar from "./src/screens/EditCar";
 import Person from "./src/screens/PersonDetails";
-import EditPerson from "./src/screens/EditPerson";
 
 const Stack = createNativeStackNavigator();
 
@@ -66,11 +65,6 @@ const App = () => {
                             <Stack.Screen
                                 name="Person"
                                 component={Person}
-                                options={{ headerShown: false }}
-                            />
-                            <Stack.Screen
-                                name="EditPerson"
-                                component={EditPerson}
                                 options={{ headerShown: false }}
                             />
                         </>
