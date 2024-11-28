@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { ScrollView, StyleSheet, View, Image } from "react-native";
-// import PagerView from "react-native-pager-view";
 import { IconButton, TextInput, Button } from "react-native-paper";
 import * as ImagePicker from "expo-image-picker";
 import { Dropdown } from "react-native-element-dropdown";
@@ -48,7 +47,6 @@ const AddCar = () => {
     const [loading, setLoading] = useState(false);
     const [isFocus, setIsFocus] = useState(false);
 
-    const userId = auth.currentUser.uid;
     const navigation = useNavigation();
 
     // No permissions request is necessary for launching the image library
