@@ -9,7 +9,7 @@ import { getPeopleData, editCar, getCarDetails } from "../utils/handleFireStore"
 import { auth } from "../../firebase";
 import { useNavigation } from "@react-navigation/native";
 
-export default EditCar = ({ route }) => {
+const EditCar = ({ route }) => {
     // Declaring and Initilizing the variables
     const carId = route.params.carId;
     let car;
@@ -120,15 +120,20 @@ export default EditCar = ({ route }) => {
     useEffect(() => {
         fetchData();
     }, [carId]);
-    
+
+
     if (loading) {
-        return <ActivityIndicator animating={true} />;
+        return (
+            <View style={styles.loadingContainer}>
+                <ActivityIndicator animating={true} size="large" />
+            </View>
+        );
     }
+
     const handleNewCar = () => {
         editCar(carId, carName, carOffer, carYear, carColor, carVariant, carPassing, carKM, carInsurance, carOwner);
         navigation.goBack();
     };
-
 
     return (
         <>
@@ -278,4 +283,11 @@ const styles = StyleSheet.create({
         marginVertical: 5,
         marginHorizontal: 20,
     },
+    loadingContainer: {
+        flex: 1, // Ensure it takes up the full screen
+        justifyContent: "center", // Center vertically
+        alignItems: "center", // Center horizontally
+    },
 });
+
+export default EditCar;
