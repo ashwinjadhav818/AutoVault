@@ -1,12 +1,12 @@
 module.exports = {
     name: "AutoVault",
     slug: "AutoVault",
-    version: "0.1.0",
+    version: "0.2.0",
     orientation: "portrait",
-    icon: "./assets/icon.png",
+    icon: "./assets/images/icon.png",
     userInterfaceStyle: "light",
     splash: {
-        image: "./assets/splash.png",
+        image: "./assets/images/splash.png",
         resizeMode: "contain",
         backgroundColor: "#ffffff"
     },
@@ -15,7 +15,7 @@ module.exports = {
         package: "com.ashwinjadhav818.AutoVault",
         googleServicesFile: process.env.GOOGLE_SERVICES_JSON,
         adaptiveIcon: {
-            foregroundImage: "./assets/adaptive-icon.png",
+            foregroundImage: "./assets/images/adaptive-icon.png",
             backgroundColor: "#ffffff"
         }
     },
