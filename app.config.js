@@ -1,14 +1,14 @@
 module.exports = {
     name: "AutoVault",
     slug: "AutoVault",
-    version: "0.2.0",
+    version: "0.3.0",
     orientation: "portrait",
     icon: "./assets/images/icon.png",
     userInterfaceStyle: "light",
     splash: {
         image: "./assets/images/splash.png",
         resizeMode: "contain",
-        backgroundColor: "#ffffff"
+        backgroundColor: "#fff",
     },
     assetBundlePatterns: ["**/*"],
     android: {
@@ -16,17 +16,19 @@ module.exports = {
         googleServicesFile: process.env.GOOGLE_SERVICES_JSON,
         adaptiveIcon: {
             foregroundImage: "./assets/images/adaptive-icon.png",
-            backgroundColor: "#ffffff"
-        }
+            backgroundColor: "#ffffff",
+        },
     },
     plugins: [
+        "expo-font",
+        "expo-router",
         "@react-native-firebase/app",
         "@react-native-firebase/auth",
-        "./plugins/selectContact.js"
+        "./plugins/selectContact.js",
     ],
     extra: {
         eas: {
-            projectId: "b37e22f1-6581-4c24-9467-a639ee327151"
-        }
-    }
+            projectId: "b37e22f1-6581-4c24-9467-a639ee327151",
+        },
+    },
 };
