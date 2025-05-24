@@ -8,12 +8,12 @@ export interface PersonType {
 
 export interface CarType {
     name: string;
-    offer: number | null;
-    year: number | null;
+    offer: number;
+    year: number;
     color: string;
     variant: string;
     passing: string;
-    km: number | null;
+    km: number;
     insurance: string;
     owner: string;
     images: string[];
