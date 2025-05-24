@@ -30,12 +30,10 @@ export default function PeopleList({ limit, query }: PeopleListProps) {
             let peopleData = await getPeopleData(refresh);
 
             if (limit) peopleData = peopleData.slice(0, limit);
-            if (query) {
-                const lowercaseQuery = query.toLowerCase();
+            if (query)
                 peopleData = peopleData.filter((person) =>
-                    person.data.name.toLowerCase().includes(lowercaseQuery),
+                    person.data.name.toLowerCase().includes(query.toLowerCase()),
                 );
-            }
 
             const uniquePeople = peopleData.filter(
                 (person, index, self) =>
@@ -52,12 +50,11 @@ export default function PeopleList({ limit, query }: PeopleListProps) {
 
     useEffect(() => {
         fetchData(true);
-    }, [query]);
 
-    useEffect(() => {
         const unsubscribe = subscribeToPeopleDataChanges(() => fetchData(true));
+
         return () => unsubscribe();
-    }, []);
+    }, [query]);
 
     if (loading)
         return (
