@@ -4,11 +4,11 @@ module.exports = {
     version: "0.3.0",
     orientation: "portrait",
     icon: "./assets/images/icon.png",
-    userInterfaceStyle: "light",
+    userInterfaceStyle: "automatic",
     splash: {
         image: "./assets/images/splash.png",
         resizeMode: "contain",
-        backgroundColor: "#fff",
+        backgroundColor: "#ffffff",
     },
     assetBundlePatterns: ["**/*"],
     android: {
