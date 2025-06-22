@@ -1,18 +1,14 @@
 import { Stack } from 'expo-router/stack';
 import { PaperProvider } from 'react-native-paper';
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
+import { ThemeProvider } from '@react-navigation/native';
 import { useThemeColor } from '@/hooks/useThemeColor';
-import { useColorScheme } from 'react-native';
 
 export default function Layout() {
-    const paperTheme = useThemeColor();
-
-
-    const colorScheme = useColorScheme();
+    const { paperTheme, navigationTheme } = useThemeColor();
 
     return (
         <PaperProvider theme={paperTheme}>
-            <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+            <ThemeProvider value={navigationTheme}>
                 <Stack screenOptions={{ headerShown: false }} />
             </ThemeProvider>
         </PaperProvider>
