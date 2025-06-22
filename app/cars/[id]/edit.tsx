@@ -1,23 +1,25 @@
 import React, { useState, useEffect } from "react";
 import { ScrollView, StyleSheet, View, Image } from "react-native";
 import { IconButton, TextInput, Button, ActivityIndicator } from "react-native-paper";
-// import * as ImagePicker from "expo-image-picker";
-import { Dropdown } from "react-native-element-dropdown";
+import { ThemedDropdown } from '@/components/ui/ThemedDropdown';
 import { getPeopleData, editCar, getCarDetails } from "@/hooks/handleFireStore";
 import { auth } from "@/firebase";
 import PagerView from "react-native-pager-view";
 import { router, useLocalSearchParams } from "expo-router";
 import { CarType } from "@/types/types";
+import { useTheme } from 'react-native-paper';
+import { MD3Theme } from 'react-native-paper';
 
 interface Person {
     label: string;
     value: string;
 }
 
-
 export default function EditCar() {
     const { id } = useLocalSearchParams();
     const carId = id as string;
+
+    const theme = useTheme() as MD3Theme;
 
     const [car, setCar] = useState<CarType>({
         name: "",
@@ -37,18 +39,6 @@ export default function EditCar() {
     const [isFocus, setIsFocus] = useState<boolean>(false);
 
     const imagePicker = async () => {
-        // let result = await ImagePicker.launchImageLibraryAsync({
-        //     mediaTypes: ImagePicker.MediaTypeOptions.All,
-        //     allowsEditing: true,
-        //     aspect: [4, 3],
-        //     quality: 1,
-        // });
-        //
-        // if (!result.canceled && result.assets && result.assets.length > 0) {
-        //     setCar({ ...car, images: [...car.images, result.assets[0].uri] });
-        // } else {
-        //     console.log("Invalid image selected.");
-        // }
     };
 
     async function fetchData() {
@@ -69,6 +59,7 @@ export default function EditCar() {
                     km: carData.data.km,
                     insurance: carData.data.insurance,
                     owner: carData.data.owner,
+                    images: carData.data.images || [],
                 });
             }
 
@@ -115,14 +106,14 @@ export default function EditCar() {
 
     if (loading) {
         return (
-            <View>
-                <ActivityIndicator animating={true} size="large" />
+            <View style={[styles.loadingContainer, { backgroundColor: theme.colors.background }]}>
+                <ActivityIndicator animating={true} size="large" color={theme.colors.primary} />
             </View>
         );
     }
 
     return (
-        <ScrollView contentContainerStyle={styles.scrollViewContent}>
+        <ScrollView contentContainerStyle={[styles.scrollViewContent, { backgroundColor: theme.colors.background }]}>
             {car.images?.length > 0 && <PagerView style={styles.pagerView} initialPage={0}>
                 {car.images.map((carImage, index) => (
                     <View key={index} style={styles.imageContainer}>
@@ -140,14 +131,16 @@ export default function EditCar() {
                 <IconButton
                     onPress={() => imagePicker()}
                     icon="file-image-plus"
-                    style={styles.imageAddButton}
+                    style={[styles.imageAddButton, { backgroundColor: theme.colors.surfaceVariant }]}
+                    iconColor={theme.colors.onSurfaceVariant}
                     size={70}
                 />
             ) : (
                 <IconButton
                     onPress={() => imagePicker()}
                     icon="file-image-plus"
-                    style={styles.smallImageAddButton}
+                    style={[styles.smallImageAddButton, { backgroundColor: theme.colors.surfaceVariant }]}
+                    iconColor={theme.colors.onSurfaceVariant}
                     size={20}
                 />
             )}
@@ -169,21 +162,13 @@ export default function EditCar() {
                     />
                 ))}
                 {people && people.length > 0 && (
-                    <Dropdown
-                        style={[styles.dropdown, isFocus && { borderColor: "blue" }]}
-                        placeholderStyle={styles.placeholderStyle}
-                        selectedTextStyle={styles.selectedTextStyle}
-                        inputSearchStyle={styles.inputSearchStyle}
-                        key={people.length.toString()}
-                        iconStyle={styles.iconStyle}
-                        maxHeight={300}
-                        labelField="label"
-                        valueField="value"
+                    <ThemedDropdown
                         data={people}
-                        search
-                        placeholder="Select owner"
                         value={car.owner}
+                        placeholder="Select owner"
                         onChange={(item) => handleInputChange("owner", item.value)}
+                        isFocus={isFocus}
+                        setIsFocus={setIsFocus}
                     />
                 )}
             </View>
@@ -209,10 +194,16 @@ const styles = StyleSheet.create({
     scrollViewContent: {
         flexGrow: 1,
     },
+    loadingContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
     imageAddButton: {
         minWidth: "95%",
         height: 200,
         alignSelf: "center",
+        marginVertical: 4,
     },
     smallImageAddButton: {
         minWidth: "95%",
@@ -221,48 +212,22 @@ const styles = StyleSheet.create({
     },
     pagerView: {
         flex: 1,
+        minHeight: 200,
     },
     imageContainer: {
         flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
     },
     emptyPagerView: {
         flex: 1,
+        alignSelf: 'center',
+        width: '95%',
+        borderRadius: 5,
+        marginVertical: 4,
     },
     formContainer: {
         paddingHorizontal: 20,
-    },
-    dropdown: {
-        backgroundColor: "white",
-        color: "gray",
-        height: 50,
-        borderColor: "darkgray",
-        borderWidth: 1.5,
-        borderRadius: 5,
-        paddingHorizontal: 8,
-        marginVertical: 4,
-    },
-    label: {
-        position: "absolute",
-        backgroundColor: "gray",
-        left: 22,
-        top: 8,
-        zIndex: 999,
-        paddingHorizontal: 8,
-        fontSize: 14,
-    },
-    placeholderStyle: {
-        fontSize: 16,
-    },
-    selectedTextStyle: {
-        fontSize: 16,
-    },
-    iconStyle: {
-        width: 20,
-        height: 20,
-    },
-    inputSearchStyle: {
-        height: 40,
-        fontSize: 16,
     },
     button: {
         borderRadius: 10,
@@ -274,4 +239,3 @@ const styles = StyleSheet.create({
         height: '100%',
     }
 });
-

@@ -1,69 +1,56 @@
 import React, { useState, useEffect } from "react";
-import { ScrollView, StyleSheet, View, Image } from "react-native";
-import { IconButton, TextInput, Button } from "react-native-paper";
-import { Dropdown } from "react-native-element-dropdown";
+import { ScrollView, StyleSheet, View, Image, Alert } from "react-native";
+import {
+    IconButton,
+    TextInput,
+    Button,
+    ActivityIndicator,
+    Dialog,
+    Portal,
+    Text,
+} from "react-native-paper";
+import { CarType as Car, PersonType as Person } from "@/types/types";
+import ThemedDropdown from '@/components/ui/ThemedDropdown'; // IMPORT your new ThemedDropdown component
 import { addNewCar, getPeopleData } from "@/hooks/handleFireStore";
 import { auth } from "@/firebase";
 import { useNavigation } from "@react-navigation/native";
 import PagerView from "react-native-pager-view";
+import { router } from "expo-router";
+import { useTheme } from 'react-native-paper';
+import { MD3Theme } from 'react-native-paper';
 
-interface Car {
-    name: string;
-    offer: number | null;
-    year: number | null;
-    color: string;
-    variant: string;
-    passing: string;
-    km: number | null;
-    insurance: string;
-    owner: string;
-    images: string[];
-}
-
-interface Person {
-    label: string;
-    value: string;
-}
 
 const AddCar: React.FC = () => {
+    const theme = useTheme() as MD3Theme;
     const [car, setCar] = useState<Car>({
         name: "",
-        offer: null,
-        year: null,
+        offer: 0,
+        year: 0,
         color: "",
         variant: "",
         passing: "",
-        km: null,
+        km: 0,
         insurance: "",
         owner: "",
         images: [],
     });
 
-    const [people, setPeople] = useState<Person[] | null>(null);
-    const [loading, setLoading] = useState<boolean>(false);
+    const [people, setPeople] = useState<Person[]>([]);
+    const [loading, setLoading] = useState<boolean>(true);
     const [isFocus, setIsFocus] = useState<boolean>(false);
+
+    // Dialog state for "no people" prompt
+    const [noPeopleDialogVisible, setNoPeopleDialogVisible] = useState(false);
 
     const navigation = useNavigation();
 
     const imagePicker = async () => {
-        // Import: import * as ImagePicker from "expo-image-picker";
-        // let result = await ImagePicker.launchImageLibraryAsync({
-        //     mediaTypes: ImagePicker.MediaTypeOptions.All,
-        //     allowsEditing: true,
-        //     aspect: [4, 3],
-        //     quality: 1,
-        // });
-        //
-        // if (!result.canceled && result.assets && result.assets.length > 0) {
-        //     setCar({ ...car, images: [...car.images, result.assets[0].uri] });
-        // } else {
-        //     console.log("Invalid image selected.");
-        // }
-        //
-        return
+        // Image picker logic here
+        return;
     };
 
     async function fetchData() {
+        setLoading(true);
         const userId = auth.currentUser?.uid;
         if (userId) {
             const peopleData = await getPeopleData(false);
@@ -72,12 +59,17 @@ const AddCar: React.FC = () => {
                 value: item.id,
             }));
             setPeople(formattedPeopleData);
+
+            // If no people are found, show the dialog
+            if (formattedPeopleData.length === 0) {
+                setNoPeopleDialogVisible(true);
+            }
         }
+        setLoading(false);
     }
 
     useEffect(() => {
         fetchData();
-        setLoading(true);
     }, []);
 
     const handleNewCar = () => {
@@ -90,7 +82,7 @@ const AddCar: React.FC = () => {
             car.passing,
             car.km,
             car.insurance,
-            car.owner
+            car.owner,
         );
         navigation.goBack();
     };
@@ -117,97 +109,134 @@ const AddCar: React.FC = () => {
 
     const numericFields: (keyof Car)[] = ["offer", "year", "km"];
 
+    if (loading) {
+        return (
+            <View style={[styles.loadingContainer, { backgroundColor: theme.colors.background }]}>
+                <ActivityIndicator animating={true} size="large" color={theme.colors.primary} />
+            </View>
+        );
+    }
+
+    if (!loading && people.length === 0) {
+        return (
+            <Portal>
+                <Dialog visible={noPeopleDialogVisible} onDismiss={() => setNoPeopleDialogVisible(false)} style={{ backgroundColor: theme.colors.surface }}>
+                    <Dialog.Title style={{ color: theme.colors.onSurface }}>No Owners Found</Dialog.Title>
+                    <Dialog.Content>
+                        <Text variant="bodyMedium" style={{ color: theme.colors.onSurfaceVariant }}>
+                            It looks like there are no people registered as owners.
+                            Please add a new person before adding a car.
+                        </Text>
+                    </Dialog.Content>
+                    <Dialog.Actions>
+                        <Button onPress={() => {
+                            setNoPeopleDialogVisible(false);
+                            router.push('/(tabs)/people'); // Navigate to your people creation screen
+                        }} labelStyle={{ color: theme.colors.primary }}>
+                            Go to Add Person
+                        </Button>
+                        <Button onPress={() => {
+                            setNoPeopleDialogVisible(false);
+                            navigation.goBack(); // Option to go back
+                        }} labelStyle={{ color: theme.colors.outline }}>
+                            Cancel
+                        </Button>
+                    </Dialog.Actions>
+                </Dialog>
+            </Portal>
+        );
+    }
+
     return (
-        <>
-            <ScrollView contentContainerStyle={styles.scrollViewContent}>
-                {car.images.length > 0 && (
-                    <PagerView style={styles.pagerView} initialPage={0}>
-                        {car.images.map((carImage, index) => (
-                            <View key={index} style={styles.imageContainer}>
-                                <Image
-                                    source={{ uri: carImage }}
-                                    style={styles.image}
-                                    resizeMode="contain"
-                                />
-                            </View>
-                        ))}
-                    </PagerView>
-                )}
-                {!car.images.length && <View style={styles.emptyPagerView} />}
-                {car.images.length === 0 ? (
-                    <IconButton
-                        onPress={() => imagePicker()}
-                        icon="file-image-plus"
-                        style={styles.imageAddButton}
-                        size={70}
-                    />
-                ) : (
-                    <IconButton
-                        onPress={() => imagePicker()}
-                        icon="file-image-plus"
-                        style={styles.smallImageAddButton}
-                        size={20}
-                    />
-                )}
-                <View style={styles.formContainer}>
-                    {carFields.map((field) => (
-                        <TextInput
-                            key={field}
-                            label={field.charAt(0).toUpperCase() + field.slice(1)}
-                            mode="outlined"
-                            value={
-                                typeof car[field] === "number"
-                                    ? car[field].toString()
-                                    : typeof car[field] === "string"
-                                        ? car[field]
-                                        : ""
-                            }
-                            onChangeText={(value) => handleInputChange(field, value)}
-                            inputMode={numericFields.includes(field) ? "numeric" : "text"}
-                        />
+        <ScrollView contentContainerStyle={[styles.scrollViewContent, { backgroundColor: theme.colors.background }]}>
+            {car.images.length > 0 && (
+                <PagerView style={styles.pagerView} initialPage={0}>
+                    {car.images.map((carImage, index) => (
+                        <View key={index} style={styles.imageContainer}>
+                            <Image
+                                source={{ uri: carImage }}
+                                style={styles.image}
+                                resizeMode="contain"
+                            />
+                        </View>
                     ))}
-                    {people && people.length > 0 && (
-                        <Dropdown
-                            style={[styles.dropdown, isFocus && { borderColor: "blue" }]}
-                            placeholderStyle={styles.placeholderStyle}
-                            selectedTextStyle={styles.selectedTextStyle}
-                            inputSearchStyle={styles.inputSearchStyle}
-                            key={people.length.toString()}
-                            iconStyle={styles.iconStyle}
-                            maxHeight={300}
-                            labelField="label"
-                            valueField="value"
-                            data={people}
-                            search
-                            placeholder="Select owner"
-                            value={car.owner}
-                            onChange={(item) => handleInputChange("owner", item.value)}
-                        />
-                    )}
-                </View>
-                <Button
-                    mode="contained-tonal"
-                    onPress={() => {
-                        const isAnyFieldEmpty = Object.values(car).some(
-                            (value) => !value && value !== ""
-                        );
-                        if (!isAnyFieldEmpty) {
-                            handleNewCar();
+                </PagerView>
+            )}
+            {!car.images.length && <View style={styles.emptyPagerView} />}
+            {car.images.length === 0 ? (
+                <IconButton
+                    onPress={() => imagePicker()}
+                    icon="file-image-plus"
+                    style={[styles.imageAddButton, { backgroundColor: theme.colors.surfaceVariant }]}
+                    iconColor={theme.colors.onSurfaceVariant}
+                    size={70}
+                />
+            ) : (
+                <IconButton
+                    onPress={() => imagePicker()}
+                    icon="file-image-plus"
+                    style={[styles.smallImageAddButton, { backgroundColor: theme.colors.surfaceVariant }]}
+                    iconColor={theme.colors.onSurfaceVariant}
+                    size={20}
+                />
+            )}
+            <View style={styles.formContainer}>
+                {carFields.map((field) => (
+                    <TextInput
+                        key={field}
+                        label={field.charAt(0).toUpperCase() + field.slice(1)}
+                        mode="outlined"
+                        value={
+                            typeof car[field] === "number"
+                                ? car[field].toString()
+                                : typeof car[field] === "string"
+                                    ? car[field]
+                                    : ""
                         }
-                    }}
-                    disabled={Object.values(car).some((value) => !value && value !== "")}
-                    style={styles.button}
-                >
-                    Save
-                </Button>
-            </ScrollView>
-        </>
+                        onChangeText={(value) => handleInputChange(field, value)}
+                        inputMode={numericFields.includes(field) ? "numeric" : "text"}
+                    />
+                ))}
+                {people && people.length > 0 && (
+                    <ThemedDropdown
+                        data={people}
+                        value={car.owner}
+                        placeholder="Select owner"
+                        onChange={(item) => handleInputChange("owner", item.value)}
+                        isFocus={isFocus}
+                        setIsFocus={setIsFocus}
+                    />
+                )}
+            </View>
+            <Button
+                mode="contained-tonal"
+                onPress={() => {
+                    const isAnyFieldEmpty = Object.values(car).some(
+                        (value) => !value && value !== "" && value !== 0
+                    );
+                    if (!isAnyFieldEmpty) {
+                        handleNewCar();
+                    } else {
+                        Alert.alert("Missing Information", "Please fill in all car details.");
+                    }
+                }}
+                disabled={Object.values(car).some((value) => !value && value !== "" && value !== 0)}
+                style={styles.button}
+            >
+                Save
+            </Button>
+        </ScrollView>
     );
 };
 
 const styles = StyleSheet.create({
     scrollViewContent: {
         flexGrow: 1,
+    },
+    loadingContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
     },
     imageAddButton: {
         minWidth: "95%",
@@ -230,39 +259,6 @@ const styles = StyleSheet.create({
     },
     formContainer: {
         paddingHorizontal: 20,
-    },
-    dropdown: {
-        backgroundColor: "white",
-        color: "gray",
-        height: 50,
-        borderColor: "darkgray",
-        borderWidth: 1.5,
-        borderRadius: 5,
-        paddingHorizontal: 8,
-        marginVertical: 4,
-    },
-    label: {
-        position: "absolute",
-        backgroundColor: "gray",
-        left: 22,
-        top: 8,
-        zIndex: 999,
-        paddingHorizontal: 8,
-        fontSize: 14,
-    },
-    placeholderStyle: {
-        fontSize: 16,
-    },
-    selectedTextStyle: {
-        fontSize: 16,
-    },
-    iconStyle: {
-        width: 20,
-        height: 20,
-    },
-    inputSearchStyle: {
-        height: 40,
-        fontSize: 16,
     },
     button: {
         borderRadius: 10,
