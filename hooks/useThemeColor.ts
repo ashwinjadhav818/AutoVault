@@ -10,11 +10,6 @@ export function useThemeColor() {
     const baseDarkPaperTheme = { ...MD3DarkTheme, colors: theme.dark };
     const baseLightPaperTheme = { ...MD3LightTheme, colors: theme.light };
 
-    // Ensure a distinct surface for the Appbar.Header in dark mode
-    if (colorScheme === 'dark') {
-        baseDarkPaperTheme.colors.surface = theme.dark.surfaceContainerHigh; // Or surfaceContainerHighest
-    }
-
     const paperTheme = colorScheme === 'dark' ? baseDarkPaperTheme : baseLightPaperTheme;
 
 
