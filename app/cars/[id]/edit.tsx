@@ -41,12 +41,12 @@ export default function EditCar() {
     const imagePicker = async () => {
     };
 
-    async function fetchData() {
+    async function fetchData(refresh: boolean) {
         setLoading(true);
         const userId = auth.currentUser?.uid;
         if (userId) {
             const carData = await getCarDetails(carId);
-            const peopleData = await getPeopleData(false);
+            const peopleData = await getPeopleData(refresh);
 
             if (carData && carData.data) {
                 setCar({
@@ -74,7 +74,7 @@ export default function EditCar() {
     }
 
     useEffect(() => {
-        fetchData();
+        fetchData(true);
     }, [carId]);
 
     const handleEditCar = () => {

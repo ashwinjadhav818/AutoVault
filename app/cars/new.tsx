@@ -49,11 +49,11 @@ const AddCar: React.FC = () => {
         return;
     };
 
-    async function fetchData() {
+    async function fetchData(refresh: boolean) {
         setLoading(true);
         const userId = auth.currentUser?.uid;
         if (userId) {
-            const peopleData = await getPeopleData(false);
+            const peopleData = await getPeopleData(refresh);
             const formattedPeopleData = peopleData.map((item) => ({
                 label: item.data.name,
                 value: item.id,
@@ -69,7 +69,7 @@ const AddCar: React.FC = () => {
     }
 
     useEffect(() => {
-        fetchData();
+        fetchData(true);
     }, []);
 
     const handleNewCar = () => {
