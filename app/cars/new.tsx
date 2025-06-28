@@ -24,12 +24,12 @@ const AddCar: React.FC = () => {
     const theme = useTheme() as MD3Theme;
     const [car, setCar] = useState<Car>({
         name: "",
-        offer: 0,
-        year: 0,
+        offer: null,
+        year: null,
         color: "",
         variant: "",
         passing: "",
-        km: 0,
+        km: null,
         insurance: "",
         owner: "",
         images: [],
