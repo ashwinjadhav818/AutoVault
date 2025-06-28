@@ -4,7 +4,8 @@ import { useForm, Controller } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { router } from "expo-router";
-import { TextInput, Button, Text, HelperText } from "react-native-paper";
+import { TextInput, Button, Text, HelperText, useTheme } from "react-native-paper";
+import { MD3Theme } from "react-native-paper";
 import { handleSignUp } from "@/hooks/handleAuth";
 
 const loginSchema = z.object({
@@ -15,6 +16,8 @@ const loginSchema = z.object({
 type LoginSchemaType = z.infer<typeof loginSchema>;
 
 export default function Signup() {
+    const theme = useTheme() as MD3Theme;
+
     const {
         control,
         handleSubmit,
@@ -39,18 +42,20 @@ export default function Signup() {
         }
     };
 
+    const themedStyles = getThemedStyles(theme);
+
     return (
-        <View style={styles.container}>
-            <View style={styles.formContainer}>
-                <View style={styles.header}>
-                    <Image source={require("@/assets/images/adaptive-icon.png")} style={styles.icon} />
-                    <Text variant="headlineMedium" style={styles.title}>
+        <View style={themedStyles.container}>
+            <View style={themedStyles.formContainer}>
+                <View style={themedStyles.header}>
+                    <Image source={require("@/assets/images/adaptive-icon.png")} style={themedStyles.icon} />
+                    <Text variant="headlineMedium" style={themedStyles.title}>
                         Sign Up
                     </Text>
-                    <Text>Please enter your details and get started!</Text>
+                    <Text style={themedStyles.bodyText}>Please enter your details and get started!</Text>
                 </View>
 
-                <View style={styles.inputContainer}>
+                <View style={themedStyles.inputContainer}>
                     <Controller
                         defaultValue=""
                         name="email"
@@ -105,21 +110,21 @@ export default function Signup() {
                     />
                 </View>
 
-                <View style={styles.buttonContainer}>
+                <View style={themedStyles.buttonContainer}>
                     <Button
                         mode="contained"
                         onPress={handleSubmit(onSubmit)}
                         loading={isLoading}
                         disabled={isLoading}
-                        style={styles.button}
+                        style={themedStyles.button}
                     >
                         {isLoading ? "Signing up..." : "Sign Up"}
                     </Button>
 
-                    <View style={styles.loginContainer}>
-                        <Text>Already have an account?</Text>
+                    <View style={themedStyles.loginContainer}>
+                        <Text style={themedStyles.bodyText}>Already have an account?</Text>
                         <TouchableOpacity onPress={() => router.push("/login")}>
-                            <Text style={styles.loginLink}>Login</Text>
+                            <Text style={themedStyles.loginLink}>Login</Text>
                         </TouchableOpacity>
                     </View>
                 </View>
@@ -128,17 +133,25 @@ export default function Signup() {
     );
 }
 
-const styles = StyleSheet.create({
+const getThemedStyles = (theme: MD3Theme) => StyleSheet.create({
     container: {
         flex: 1,
         justifyContent: "center",
         alignItems: "center",
-        backgroundColor: "#fff",
         padding: 16,
+        backgroundColor: theme.colors.background,
     },
     formContainer: {
         width: "100%",
         maxWidth: 440,
+        backgroundColor: theme.colors.surface,
+        borderRadius: theme.roundness * 2,
+        padding: 24,
+        elevation: 2,
+        shadowColor: theme.colors.shadow,
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.22,
+        shadowRadius: 2.22,
     },
     header: {
         alignItems: "center",
@@ -147,18 +160,26 @@ const styles = StyleSheet.create({
     icon: {
         width: 150,
         height: 64,
+        marginBottom: 16,
     },
     title: {
         marginBottom: 8,
+        color: theme.colors.onSurface,
+    },
+    bodyText: {
+        color: theme.colors.onSurfaceVariant,
+        textAlign: 'center',
     },
     inputContainer: {
         marginBottom: 16,
+        gap: 16,
     },
     buttonContainer: {
         width: "100%",
     },
     button: {
         width: "100%",
+        borderRadius: theme.roundness,
     },
     loginContainer: {
         flexDirection: "row",
@@ -166,7 +187,8 @@ const styles = StyleSheet.create({
         marginTop: 16,
     },
     loginLink: {
-        color: "blue",
+        color: theme.colors.primary,
         marginLeft: 4,
+        fontWeight: 'bold',
     },
 });
