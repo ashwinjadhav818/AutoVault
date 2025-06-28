@@ -41,7 +41,7 @@ let userCars: string[] = [];
 let userCarsData: Car[] = [];
 let userPeople: string[] = [];
 let peopleData: Person[] = [];
-let userId: string | null;
+let userId: string | null = auth.currentUser?.uid || null;
 
 onAuthStateChanged(auth, (user: any) => {
     if (user) {

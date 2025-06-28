@@ -23,8 +23,6 @@ export function ThemedDropdown({ data, value, placeholder, onChange, isFocus, se
 
     const themedStyles = getThemedStyles(theme);
 
-    console.log(theme.colors)
-
     return (
         <Dropdown
             style={[themedStyles.dropdown, isFocus && { borderColor: theme.colors.primary }]} // Use theme.colors.primary for focus
