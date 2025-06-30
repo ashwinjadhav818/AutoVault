@@ -7,6 +7,7 @@ import { addPerson, deleteCar, deletePerson } from "@/hooks/handleFireStore";
 import { router } from "expo-router";
 import { selectContact } from "react-native-select-contact";
 import { normalizePhoneNumber } from "@/hooks/helperFunctions";
+import InfoDialog from "../Dialogs/InfoDialog";
 
 const MORE_ICON = Platform.OS === "ios" ? "dots-horizontal" : "dots-vertical";
 
@@ -115,10 +116,13 @@ interface PersonItemsProps {
     personId: string;
 }
 
+
 export function PersonItems({ personId }: PersonItemsProps) {
     const [isMenuVisible, setIsMenuVisible] = useState(false);
     const [isEditDialogVisible, setEditDialogVisible] = useState(false);
     const [isDeleteDialogVisible, setDeleteDialogVisible] = useState(false);
+    const [infoDialogVisible, setInfoDialogVisible] = useState(false);
+    const [infoDialogMessage, setInfoDialogMessage] = useState("");
 
     const openMenu = () => setIsMenuVisible(true);
     const closeMenu = () => setIsMenuVisible(false);
@@ -133,10 +137,16 @@ export function PersonItems({ personId }: PersonItemsProps) {
         setDeleteDialogVisible(true);
     };
 
-    const confirmDelete = () => {
+    const confirmDelete = async () => {
         setDeleteDialogVisible(false);
-        deletePerson(personId);
-        router.back();
+        const result = await deletePerson(personId);
+
+        if (!result.success) {
+            setInfoDialogMessage(result.reason || "Could not delete person.");
+            setInfoDialogVisible(true);
+        } else {
+            router.back();
+        }
     };
 
     return (
@@ -164,6 +174,15 @@ export function PersonItems({ personId }: PersonItemsProps) {
                 title="Confirm Delete"
                 message="Are you sure you want to delete this person?"
             />
+
+            <InfoDialog
+                visible={infoDialogVisible}
+                onDismiss={() => setInfoDialogVisible(false)}
+                title="Cannot Delete"
+                message={infoDialogMessage}
+            />
         </View>
     );
 }
+
+

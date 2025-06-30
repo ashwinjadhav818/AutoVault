@@ -11,6 +11,7 @@ import {
 } from "@react-native-firebase/firestore";
 import { onAuthStateChanged } from "@react-native-firebase/auth";
 import { db, auth } from "@/firebase";
+import { Alert } from "react-native";
 
 // Define interfaces for data structures
 interface Car {
@@ -309,16 +310,28 @@ export const editPerson = async (
     }
 };
 
-export const deletePerson = async (personId: string): Promise<void> => {
+export const deletePerson = async (personId: string,): Promise<{ success: boolean; reason?: string }> => {
     try {
+        const cars = await getCarsData(true);
+        const ownedCars = cars.filter((car) => car.data.owner === personId);
+
+        if (ownedCars.length > 0) {
+            return {
+                success: false,
+                reason: `This person owns ${ownedCars.length} car(s). Please delete them first.`,
+            };
+        }
+
         await deleteDoc(doc(db, "people", personId));
-        const userDocRef = doc(db, "users", userId as string);
-        await updateDoc(userDocRef, {
+        await updateDoc(doc(db, "users", userId as string), {
             peopleID: arrayRemove(personId),
         });
+
         updatePeopleData();
+        return { success: true };
     } catch (error) {
         console.error("Error deleting person: ", error);
+        return { success: false, reason: "Unexpected error occurred." };
     }
 };
 
