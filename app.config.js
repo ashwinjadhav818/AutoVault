@@ -1,7 +1,7 @@
 module.exports = {
     name: "AutoVault",
     slug: "AutoVault",
-    version: "0.3.0",
+    version: "0.3.1",
     orientation: "portrait",
     icon: "./assets/images/icon.png",
     userInterfaceStyle: "automatic",
